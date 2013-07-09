@@ -73,19 +73,27 @@ if(require.main == module) {
 
     var checkJson;
     if (program.url){
+	
+	var htmlfile = 'asg3.html';
 
-	rest.get(program.url).on('complete', function(checkJson) {
-
-		checkJson = checkHtmlFile(HTMLFILE_DEFAULT, program.checks);
-	        var outJson = JSON.stringify(checkJson, null, 4);
-	        console.log(outJson);
-
+	rest.get(program.url).on('complete', function(result,response) {
+		if (result instanceof Error) {
+		    sys.puts('Error: ' + result.message);
+		    console.error('Error: ' + util.format(response.message));
+		  } else {		
+		  fs.writeFileSync(htmlfile, result);
+			checkJson = checkHtmlFile(htmlfile, program.checks);
+	        	var outJson = JSON.stringify(checkJson, null, 4);
+	        	console.log(outJson);
+			fs.writeFileSync('asg3.json',outJson);
+	        }
 	});
 	}
     else {
 	checkJson = checkHtmlFile(program.file, program.checks);
 	var outJson = JSON.stringify(checkJson, null, 4);
 	console.log(outJson);
+	fs.writeFileSync('asg3.json',outJson);
 
     }
 } else {
